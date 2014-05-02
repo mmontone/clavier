@@ -18,6 +18,11 @@
 	   #:blank-validator
 	   #:not-blank-validator
 	   #:type-validator
+	   #:string-validator
+	   #:boolean-validator
+	   #:integer-validator
+	   #:symbol-validator
+	   #:keyword-validator
 	   #:function-validator
 	   #:true-validator
 	   #:false-validator
@@ -46,6 +51,11 @@
 	   #:||
 	   #:fn
 	   #:is-a
+	   #:is-a-string
+	   #:is-a-boolean
+	   #:is-an-integer
+	   #:is-a-symbol
+	   #:is-a-keyword
 	   #:valid-email
 	   #:matches-regex
 	   #:valid-url))

@@ -124,7 +124,47 @@
   (:default-initargs
    :message (lambda (validator object)
 	      (format nil "~A is not of type ~A" object (validator-type validator))))
-  (:metaclass closer-mop:funcallable-standard-class))   
+  (:metaclass closer-mop:funcallable-standard-class))
+
+(defclass string-validator (type-validator)
+  ()
+  (:default-initargs
+   :type 'string
+   :message (lambda (validator object)
+	      (format nil "~A is not a string" object)))
+  (:metaclass closer-mop:funcallable-standard-class))
+
+(defclass boolean-validator (type-validator)
+  ()
+  (:default-initargs
+   :type 'boolean
+   :message (lambda (validator object)
+	      (format nil "~A is not a boolean" object)))
+  (:metaclass closer-mop:funcallable-standard-class))
+
+(defclass integer-validator (type-validator)
+  ()
+  (:default-initargs
+   :type 'integer
+   :message (lambda (validator object)
+	      (format nil "~A is not an integer" object)))
+  (:metaclass closer-mop:funcallable-standard-class))
+
+(defclass symbol-validator (type-validator)
+  ()
+  (:default-initargs
+   :type 'symbol
+   :message (lambda (validator object)
+	      (format nil "~A is not a symbol" object)))
+  (:metaclass closer-mop:funcallable-standard-class))
+
+(defclass keyword-validator (type-validator)
+  ()
+  (:default-initargs
+   :type 'keyword
+   :message (lambda (validator object)
+	      (format nil "~A is not a keyword" object)))
+  (:metaclass closer-mop:funcallable-standard-class))
 
 (defclass function-validator (validator)
   ((function :initarg :function
@@ -409,6 +449,31 @@
 	 `(:type ,type
 		 ,@(when message
 			 (list :message message)))))
+
+(defun is-a-string (&optional message)
+  (apply #'make-instance 'string-validator
+	 (when message
+	   (list :message message))))
+
+(defun is-a-boolean (&optional message)
+  (apply #'make-instance 'boolean-validator
+	 (when message
+	   (list :message message))))
+
+(defun is-an-integer (&optional message)
+  (apply #'make-instance 'integer-validator
+	 (when message
+	   (list :message message))))
+
+(defun is-a-symbol (&optional message)
+  (apply #'make-instance 'symbol-validator
+	 (when message
+	   (list :message message))))
+
+(defun is-a-keyword (&optional message)
+  (apply #'make-instance 'keyword-validator
+	 (when message
+	   (list :message message))))
 
 (defun valid-email (&optional message)
   (apply #'make-instance 'email-validator (when message

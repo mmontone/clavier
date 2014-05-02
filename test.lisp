@@ -76,13 +76,54 @@
     (is (funcall validator 22))
     (is (not (funcall validator "hello")))))
 
+;; string validator
+(deftest string-validator-test ()
+  (let ((validator (make-instance 'string-validator)))
+    (is (funcall validator "lala"))
+    (is (not (funcall validator 22)))
+    (is (not (funcall validator t)))))
+
+;; boolean validator
+(deftest boolean-validator-test ()
+  (let ((validator (make-instance 'boolean-validator)))
+    (is (not (funcall validator "lala")))
+    (is (not (funcall validator 22)))
+    (is (funcall validator t))
+    (is (funcall validator nil))))
+
+;; integer validator
+(deftest integer-validator-test ()
+  (let ((validator (make-instance 'integer-validator)))
+    (is (not (funcall validator "asdf")))
+    (is (funcall validator 22))
+    (is (not (funcall validator t)))))
+
+;; symbol validator
+(deftest symbol-validator-test ()
+  (let ((validator (make-instance 'symbol-validator)))
+    (is (not (funcall validator "lala")))
+    (is (not (funcall validator 22)))
+    (is (funcall validator t))
+    (is (funcall validator 'foo))
+    (is (funcall validator :foo))))
+
+;; keyword validator
+(deftest keyword-validator-test ()
+  (let ((validator (make-instance 'keyword-validator)))
+    (is (not (funcall validator "lala")))
+    (is (not (funcall validator 22)))
+    (is (not (funcall validator t)))
+    (is (not (funcall validator 'foo)))
+    (is (funcall validator :foo))))
+
 ;; function validator
 (deftest function-validator-test ()
-  (let ((validator (make-instance 'function-validator :function (lambda (x)
-								  (equalp x 22))
-				  :message (lambda (validator object)
-					     (format nil "~A is not 22" object)))))
-  
+  (let ((validator
+	 (make-instance 'function-validator
+			:function (lambda (x)
+				    (equalp x 22))
+			:message (lambda (validator object)
+				   (format nil "~A is not 22" object)))))
     (is (funcall validator 22))
     (is (not (funcall validator 33)))))
 
