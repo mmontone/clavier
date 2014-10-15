@@ -371,123 +371,123 @@
   (> object (validator-number validator)))
 
 ;; Validator builder functions
-(defun == (object &optional message)
+(defun == (object &optional message &rest args)
   (apply #'make-instance 'equal-to-validator
 	 `(:object ,object
 		   ,@(when message
-			   (list :message message)))))
+			   (list :message (apply #'format nil message args))))))
 
-(defun ~= (object &optional message)
+(defun ~= (object &optional message &rest args)
   (apply #'make-instance 'not-equal-to-validator
 	 `(:object ,object
 		   ,@(when message
-			   (list :message message)))))
+			   (list :message (apply #'format nil message args))))))
 
-(defun one-of (options &optional message)
+(defun one-of (options &optional message &rest args)
   (apply #'make-instance 'one-of-validator
 	 `(:options ,options
 		    ,@(when message
-			    (list :message message)))))
+			    (list :message (apply #'format nil message args))))))
 
-(defun blank (&optional message)
+(defun blank (&optional message &rest args)
   (apply #'make-instance 'blank-validator
 	 (when message
-	   (list :message message))))
+	   (list :message (apply #'format nil message args)))))
 
-(defun not-blank (&optional message)
+(defun not-blank (&optional message &rest args)
   (apply #'make-instance 'not-blank-validator
 	 (when message
-	   (list :message message))))
+	   (list :message (apply #'format nil message args)))))
 
-(defun is-true (&optional message)
+(defun is-true (&optional message &rest args)
   (apply #'make-instance 'is-true-validator
 	 (when message
-	   (list :message message))))
+	   (list :message (apply #'format nil message args)))))
 
-(defun is-false (&optional message)
+(defun is-false (&optional message &rest args)
   (apply #'make-instance 'is-false-validator
 	 (when message
-	   (list :message message))))
+	   (list :message (apply #'format nil message args)))))
 
-(defun greater-than (number &optional message)
+(defun greater-than (number &optional message &rest args)
   (apply #'make-instance 'greater-than-validator
 	 `(:number ,number
 		   ,@(when message
-			   (list :message message)))))
+			   (list :message (apply #'format nil message args))))))
 
-(defun less-than (number &optional message)
+(defun less-than (number &optional message &rest args)
   (apply #'make-instance 'less-than-validator
 	 `(:number ,number
 		   ,@(when message
-			   (list :message message)))))
+			   (list :message (apply #'format nil message args))))))
 
-(defun ~ (validator &optional message)
+(defun ~ (validator &optional message &rest args)
   (apply #'make-instance 'not-validator
 	 `(:validator ,validator
 		      ,@(when message
-			      (list :message message)))))
+			      (list :message (apply #'format nil message args))))))
 
-(defun && (x y &optional message)
+(defun && (x y &optional message &rest args)
   (apply #'make-instance 'and-validator
 	 `(:x ,x :y ,y
 	      ,@(when message
-		      (list :message message)))))
+		      (list :message (apply #'format nil message args))))))
 
-(defun || (x y &optional message)
+(defun || (x y &optional message &rest args)
   (apply #'make-instance 'or-validator
 	 `(:x ,x :y ,y
 	      ,@(when message
-		      (list :message message)))))
+		      (list :message (apply #'format nil message args))))))
 
-(defun fn (function message)
+(defun fn (function message &rest args)
   (make-instance 'function-validator
 		 :function function
-		 :message message))
+		 :message (apply #'format nil message args)))
 
-(defun is-a (type &optional message)
+(defun is-a (type &optional message &rest args)
   (apply #'make-instance 'type-validator
 	 `(:type ,type
 		 ,@(when message
-			 (list :message message)))))
+			 (list :message (apply #'format nil message args))))))
 
-(defun is-a-string (&optional message)
+(defun is-a-string (&optional message &rest args)
   (apply #'make-instance 'string-validator
 	 (when message
-	   (list :message message))))
+	   (list :message (apply #'format nil message args)))))
 
-(defun is-a-boolean (&optional message)
+(defun is-a-boolean (&optional message &rest args)
   (apply #'make-instance 'boolean-validator
 	 (when message
-	   (list :message message))))
+	   (list :message (apply #'format nil message args)))))
 
-(defun is-an-integer (&optional message)
+(defun is-an-integer (&optional message &rest args)
   (apply #'make-instance 'integer-validator
 	 (when message
-	   (list :message message))))
+	   (list :message (apply #'format nil message args)))))
 
-(defun is-a-symbol (&optional message)
+(defun is-a-symbol (&optional message &rest args)
   (apply #'make-instance 'symbol-validator
 	 (when message
-	   (list :message message))))
+	   (list :message (apply #'format nil message args)))))
 
-(defun is-a-keyword (&optional message)
+(defun is-a-keyword (&optional message &rest args)
   (apply #'make-instance 'keyword-validator
 	 (when message
-	   (list :message message))))
+	   (list :message (apply #'format nil message args)))))
 
-(defun valid-email (&optional message)
+(defun valid-email (&optional message &rest args)
   (apply #'make-instance 'email-validator (when message
-					    (list :message message))))
+					    (list :message (apply #'format nil message args)))))
 
-(defun valid-url (&optional message)
+(defun valid-url (&optional message &rest args)
   (apply #'make-instance 'url-validator (when message
-					    (list :message message))))
+					    (list :message (apply #'format nil message args)))))
 
-(defun matches-regex (regex &optional message)
+(defun matches-regex (regex &optional message &rest args)
   (apply #'make-instance 'regex-validator
 	 `(:regex ,regex
 		  ,@(when message
-			  (list :message message)))))
+			  (list :message (apply #'format nil message args))))))
 
 (defun validator-message (validator object)
   "Returns the validator message for the given object"
