@@ -294,80 +294,81 @@
        :message (ps:ps (lambda (validator object)
 			 "Should not be empty"))))))
 
-(defun validate (validator object &key (error-p *signal-validation-errors*) message)
-  (if (not (%validate validator object))
+(defun validate (validator object &rest args &key (error-p *signal-validation-errors*) message &allow-other-keys)
+  (if (not (apply #'%validate validator object args))
       (let ((message (or message (validator-message validator object))))
 	(if error-p
 	    (validation-error object message)
 	    (values nil message)))
       t))     
 
-(defmethod %validate (validator object))
+(defgeneric %validate (validator object &rest args))
+(defmethod %validate (validator object &rest args))
 
-(defmethod %validate ((validator validator-collection) object)
+(defmethod %validate ((validator validator-collection) object &rest args)
   (loop for validator in (validators validator)
        do (validate validator object :error-p t)))
   
-(defmethod %validate ((validator equal-to-validator) object)
+(defmethod %validate ((validator equal-to-validator) object &rest args)
   (equalp object (object validator)))
 
-(defmethod %validate ((validator not-equal-to-validator) object)
+(defmethod %validate ((validator not-equal-to-validator) object &rest args)
   (not (equalp object (object validator))))
 
-(defmethod %validate ((validator type-validator) object)
+(defmethod %validate ((validator type-validator) object &rest args)
   (typep object (validator-type validator)))
 
-(defmethod %validate ((validator function-validator) object)
+(defmethod %validate ((validator function-validator) object &rest args)
   (funcall (validator-function validator) object))
 
-(defmethod %validate ((validator blank-validator) object)
+(defmethod %validate ((validator blank-validator) object &rest args)
   (or (null object)
       (equalp object "")))
 
-(defmethod %validate ((validator not-blank-validator) object)
+(defmethod %validate ((validator not-blank-validator) object &rest args)
   (not (or (null object)
 	   (equalp object ""))))
 
-(defmethod %validate ((validator true-validator) object)
+(defmethod %validate ((validator true-validator) object &rest args)
   (eql t object))
 
-(defmethod %validate ((validator false-validator) object)
+(defmethod %validate ((validator false-validator) object &rest args)
   (null object))
 
 (defun valid-email-address-p (string)
   (not (null
 	(ppcre:scan "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$" string))))
 
-(defmethod %validate ((validator email-validator) object)
+(defmethod %validate ((validator email-validator) object &rest args)
   (valid-email-address-p object))
 
 (defun valid-url-p (string)
   (not (null (ppcre:scan "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\??(?:[\\-\\+=&;%@\\.\\w_]*)#?(?:[\\.\\!\\/\\\\\\w]*))?)" string))))
 
-(defmethod %validate ((validator url-validator) object)
+(defmethod %validate ((validator url-validator) object &rest args)
   (valid-url-p object))
 
-(defmethod %validate ((validator regex-validator) object)
+(defmethod %validate ((validator regex-validator) object &rest args)
   (not (null (ppcre:scan (validator-regex validator) object))))
 
-(defmethod %validate ((validator not-validator) object)
+(defmethod %validate ((validator not-validator) object &rest args)
   (not (%validate (validator validator) object)))
 
-(defmethod %validate ((validator and-validator) object)
+(defmethod %validate ((validator and-validator) object &rest args)
   (and (validate (x validator) object)
        (validate (y validator) object)))
 
-(defmethod %validate ((validator or-validator) object)
+(defmethod %validate ((validator or-validator) object &rest args)
   (or (validate (x validator) object)
       (validate (y validator) object)))
 
-(defmethod %validate ((validator one-of-validator) object)
+(defmethod %validate ((validator one-of-validator) object &rest args)
   (member object (options validator) :test #'equalp))
 
-(defmethod %validate ((validator less-than-validator) object)
+(defmethod %validate ((validator less-than-validator) object &rest args)
   (< object (validator-number validator)))
 
-(defmethod %validate ((validator greater-than-validator) object)
+(defmethod %validate ((validator greater-than-validator) object &rest args)
   (> object (validator-number validator)))
 
 ;; Validator builder functions
