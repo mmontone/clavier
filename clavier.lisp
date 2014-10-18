@@ -269,6 +269,26 @@
 	      (format nil "~A is not greater than ~A" object (validator-number validator))))
   (:metaclass closer-mop:funcallable-standard-class))
 
+(defclass length-validator (validator)
+  ((min :initarg :min
+	:accessor validator-min
+	:initform nil
+	:documentation "Minimum length")
+   (max :initarg :max
+	:accessor validator-max
+	:initform nil
+	:documentation "Maximum length")
+   (min-message :initarg :min-message
+		:accessor validator-min-message
+		:initform nil
+		:documentation "Message for when length is below minimum")
+   (max-message :initarg :max-message
+		:accessor validator-max-message
+		:initform nil
+		:documentation "Message for when length is above maximum"))
+  (:default-initargs :message "Size is not correct")
+  (:metaclass closer-mop:funcallable-standard-class))
+
 (defgeneric client-side-validator (validator))
 
 (defmethod client-side-validator ((validator equal-to-validator))
@@ -334,6 +354,12 @@
 
 (defmethod %validate ((validator false-validator) object &rest args)
   (null object))
+
+(defmethod %validate ((validator length-validator) object &rest args)
+  (and (or (null (validator-min validator))
+	   (>= (length object) (validator-min validator)))
+       (or (null (validator-max validator))
+	   (<= (length object) (validator-max validator)))))		 
 
 (defun valid-email-address-p (string)
   (not (null
@@ -489,6 +515,13 @@
 	 `(:regex ,regex
 		  ,@(when message
 			  (list :message (apply #'format nil message args))))))
+
+(defun len (&key min max min-message max-message)
+  (make-instance 'length-validator
+		 :min min
+		 :max max
+		 :min-message min-message
+		 :max-message max-message))
 
 (defun validator-message (validator object)
   "Returns the validator message for the given object"

@@ -201,6 +201,21 @@
     (is (not (funcall validator "google.com")))
     (is (funcall validator "http://www.google.com"))))
 
+;; length validator
+(deftest length-validator-test ()
+  (let ((validator (make-instance 'length-validator :min 5)))
+    (is (not (funcall validator "lala")))
+    (is (funcall validator "foobar"))
+    (is (funcall validator "12345")))
+  (let ((validator (make-instance 'length-validator :max 5)))
+    (is (funcall validator "lala"))
+    (is (not (funcall validator "foobar")))
+    (is (funcall validator "12345")))
+  (let ((validator (make-instance 'length-validator :min 2 :max 6)))
+    (is (not (funcall validator "a")))
+    (is (funcall validator "foo"))
+    (is (not (funcall validator "foobarfoo")))))
+
 ;; builder tests
 (deftest builders-test ()
   (let ((validator (not-blank)))

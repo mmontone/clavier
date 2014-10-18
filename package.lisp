@@ -35,6 +35,7 @@
 	   #:email-validator
 	   #:regex-validator
 	   #:url-validator
+	   #:length-validator
 
 	   ;; Validator builders
 	   #:==
@@ -58,4 +59,5 @@
 	   #:is-a-keyword
 	   #:valid-email
 	   #:matches-regex
-	   #:valid-url))
+	   #:valid-url
+	   #:len))
