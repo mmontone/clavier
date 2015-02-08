@@ -16,9 +16,7 @@ from your lisp listener.
 You will also need to satisfy these system dependencies:
 
 - `alexandria`
-- `cl-json`
 - `cl-ppcre`
-- `parenscript`
 - `closer-mop`
 
 The easiest way of installing those packages is via [Quicklisp](http://www.quicklisp.org/).
