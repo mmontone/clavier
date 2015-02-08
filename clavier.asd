@@ -5,8 +5,6 @@
   :license "MIT"
   :depends-on (#:alexandria
                #:cl-ppcre
-               #:cl-json
-               #:parenscript
 	       #:closer-mop)
   :components ((:file "package")
                (:file "clavier"))

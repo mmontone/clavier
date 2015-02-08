@@ -289,31 +289,6 @@
   (:default-initargs :message "Size is not correct")
   (:metaclass closer-mop:funcallable-standard-class))
 
-(defgeneric client-side-validator (validator))
-
-(defmethod client-side-validator ((validator equal-to-validator))
-  (with-output-to-string (json:*json-output*)
-    (json:with-object ()
-      (json:encode-object-member
-       :name 'equal-to-validator)
-      (json:encode-object-member
-       :message (ps:ps (lambda (validator object)
-			 (concatenate 'string object "is not equal to " validator.object))))
-      (json:encode-object-member
-       :validation (ps:ps (lambda (validator object)
-			    (equalp object validator.object))))
-      (json:encode-object-member
-       :object (json:encode-json-to-string (object validator))))))
-
-(defmethod client-side-validator ((validator not-blank-validator))
-  (with-output-to-string (json:*json-output*)
-    (json:with-object ()
-      (json:encode-object-member
-       :name 'not-blank-validator)
-      (json:encode-object-member
-       :message (ps:ps (lambda (validator object)
-			 "Should not be empty"))))))
-
 (defun validate (validator object &rest args &key (error-p *signal-validation-errors*) message &allow-other-keys)
   (if (not (apply #'%validate validator object args))
       (let ((message (or message (validator-message validator object))))
