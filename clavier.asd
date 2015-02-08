@@ -9,5 +9,7 @@
                #:parenscript
 	       #:closer-mop)
   :components ((:file "package")
-               (:file "clavier")))
+               (:file "clavier"))
+  :in-order-to ((asdf:test-op 
+		 (asdf:test-op :clavier.test))))
 
