@@ -83,6 +83,16 @@ Validators messages to be used when validation fails can be customized passing a
 
 ## Catching and collecting validation errors
 
+Validation errors can controlled globally by setting the dynamic variable `*signal-validation-errors*`, which is `NIL` by default (no validation errors are signaled by default).
+
+There's also the `with-signal-validation-errors` macro to specify whether validation errors should be signaled or not in a dynamic extent. For instance, this code signals a validation error:
+
+```lisp
+(let ((validator (make-instance 'equal-to-validator :object 22)))
+	   (with-signal-validation-errors (t)
+	     (validate validator 33)))
+```
+
 Use the `collecting-validation-errors` macro to collect validation errors happening in a dynamic extent:
 
 ```lisp
