@@ -198,6 +198,14 @@
 	      (format nil "~A is not a valid URL" object)))
   (:metaclass closer-mop:funcallable-standard-class))
 
+(defclass datetime-validator (validator)
+  ()
+  (:default-initargs
+   :message (lambda (validator object)
+	      (declare (ignorable validator object))
+	      (format nil "~A is not a valid timestamp" object)))
+  (:metaclass closer-mop:funcallable-standard-class))
+
 (defclass not-validator (validator)
   ((validator :initarg :validator
 	      :accessor validator
@@ -352,6 +360,9 @@
 (defmethod %validate ((validator regex-validator) object &rest args)
   (not (null (ppcre:scan (validator-regex validator) object))))
 
+(defmethod %validate ((validator datetime-validator) object &rest args)
+  (not (null (chronicity:parse object))))
+
 (defmethod %validate ((validator not-validator) object &rest args)
   (not (%validate (validator validator) object)))
 
@@ -478,12 +489,19 @@
 	   (list :message (apply #'format nil message args)))))
 
 (defun valid-email (&optional message &rest args)
-  (apply #'make-instance 'email-validator (when message
-					    (list :message (apply #'format nil message args)))))
+  (apply #'make-instance 'email-validator 
+	 (when message
+	   (list :message (apply #'format nil message args)))))
 
 (defun valid-url (&optional message &rest args)
-  (apply #'make-instance 'url-validator (when message
-					    (list :message (apply #'format nil message args)))))
+  (apply #'make-instance 'url-validator 
+	 (when message
+	   (list :message (apply #'format nil message args)))))
+
+(defun valid-datetime (&optional message &rest args)
+  (apply #'make-instance 'datetime-validator
+	 (when message
+	   (list :message (apply #'format nil message args)))))	   
 
 (defun matches-regex (regex &optional message &rest args)
   (apply #'make-instance 'regex-validator

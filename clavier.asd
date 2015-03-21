@@ -5,7 +5,8 @@
   :license "MIT"
   :depends-on (#:alexandria
                #:cl-ppcre
-	       #:closer-mop)
+	       #:closer-mop
+	       #:chronicity)
   :components ((:file "package")
                (:file "clavier"))
   :in-order-to ((asdf:test-op 
