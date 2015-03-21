@@ -6,9 +6,9 @@
   :depends-on (#:alexandria
                #:cl-ppcre
 	       #:closer-mop
-	       #:chronicity)
+	       #:chronicity
+	       #:cl-fad)
   :components ((:file "package")
                (:file "clavier"))
   :in-order-to ((asdf:test-op 
 		 (asdf:test-op :clavier.test))))
-

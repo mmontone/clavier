@@ -206,6 +206,25 @@
 	      (format nil "~A is not a valid timestamp" object)))
   (:metaclass closer-mop:funcallable-standard-class))
 
+(defclass pathname-validator (validator)
+  ((absolute-p :initarg :absolute-p
+	       :accessor absolute-p
+	       :initform nil
+	       :documentation "If the pathname should be absolute")
+   (probe-p :initarg :probe-p
+	    :accessor probe-p
+	    :initform nil
+	    :documentation "Probe existance of pathname")
+   (pathname-type :initarg :pathname-type
+		  :accessor pathname-type*
+		  :initform nil
+		  :documentation "The pathname type"))
+  (:default-initargs
+   :message (lambda (validator object)
+	      (declare (ignorable validator object))
+	      (format nil "~A is not a valid pathname" object)))
+  (:metaclass closer-mop:funcallable-standard-class))
+
 (defclass not-validator (validator)
   ((validator :initarg :validator
 	      :accessor validator
@@ -363,6 +382,16 @@
 (defmethod %validate ((validator datetime-validator) object &rest args)
   (not (null (chronicity:parse object))))
 
+(defmethod %validate ((validator pathname-validator) object &rest args)
+  (and (pathname object)
+       (or (not (absolute-p validator))
+	   (fad:pathname-absolute-p (pathname object)))
+       (or (not (pathname-type* validator))
+	   (equalp (pathname-type (pathname object))
+		   (pathname-type* validator)))
+       (or (not (probe-p validator))
+	   (probe-file (pathname object)))))		
+
 (defmethod %validate ((validator not-validator) object &rest args)
   (not (%validate (validator validator) object)))
 
@@ -502,6 +531,11 @@
   (apply #'make-instance 'datetime-validator
 	 (when message
 	   (list :message (apply #'format nil message args)))))	   
+
+(defun valid-pathname (&optional message &rest args)
+  (apply #'make-instance 'pathname-validator
+	 (when message
+	   (list :message (apply #'format nil message args)))))
 
 (defun matches-regex (regex &optional message &rest args)
   (apply #'make-instance 'regex-validator

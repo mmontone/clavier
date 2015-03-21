@@ -36,6 +36,7 @@
 	   #:regex-validator
 	   #:url-validator
 	   #:datetime-validator
+	   #:pathname-validator
 	   #:length-validator
 
 	   ;; Validator builders
@@ -62,4 +63,5 @@
 	   #:matches-regex
 	   #:valid-url
 	   #:valid-datetime
+	   #:valid-pathname
 	   #:len))
