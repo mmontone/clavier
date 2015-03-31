@@ -131,7 +131,8 @@
   (:default-initargs
    :type 'string
    :message (lambda (validator object)
-	      (format nil "~A is not a string" object)))
+	      (declare (ignore validator))
+	      (format nil "~S is not a string" object)))
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defclass boolean-validator (type-validator)
@@ -245,9 +246,9 @@
    :message (lambda (validator object)
 	      (format nil "~A or ~A"
 		      (let ((x-validator (x validator)))
-			(funcall (message x-validator) x-validator object))
+			(validator-message x-validator object))
 		      (let ((y-validator (y validator)))
-			(funcall (message y-validator) y-validator object)))))
+			(validator-message y-validator object)))))
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defclass or-validator (validator)
@@ -261,9 +262,9 @@
    :message (lambda (validator object)
 	      (format nil "~A and ~A"
 		      (let ((x-validator (x validator))) 
-			(funcall (message x-validator) x-validator object))
+			(validator-message x-validator object))
 		      (let ((y-validator (y validator)))
-			(funcall (message y-validator) y-validator object)))))
+			(validator-message y-validator object)))))
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defclass one-of-validator (validator)
