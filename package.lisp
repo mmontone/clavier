@@ -5,6 +5,8 @@
 	   #:with-signal-validation-errors
 	   #:collecting-validation-errors
 	   #:validation-error
+           #:validation-error-target
+           #:validation-error-message
 	   #:validator
 	   #:validate
 	   #:message
