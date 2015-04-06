@@ -28,10 +28,10 @@
 (define-condition validation-error (error)
   ((target :initarg :target
            :initform (error "Set up the target")
-           :accessor validation-error-target)
+           :reader validation-error-target)
    (error-msg :initarg :error-msg
               :initform (error "Provide the error message")
-              :accessor validation-error-message))
+              :reader validation-error-message))
   (:report (lambda (c s)
              (format s "~A" (validation-error-message c)))))
 
