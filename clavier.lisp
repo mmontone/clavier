@@ -27,19 +27,19 @@
 
 (define-condition validation-error (error)
   ((target :initarg :target
-	   :initform (error "Set up the target")
-	   :accessor target)
+           :initform (error "Set up the target")
+           :reader validation-error-target)
    (error-msg :initarg :error-msg
-	      :initform (error "Provide the error message")
-	      :accessor error-msg))
+              :initform (error "Provide the error message")
+              :reader validation-error-message))
   (:report (lambda (c s)
-	     (format s "~A" (error-msg c)))))
+             (format s "~A" (validation-error-message c)))))
 
 (defmethod print-object ((validation-error validation-error) stream)
   (print-unreadable-object (validation-error stream :type t :identity t)
     (format stream "~A: ~A"
-	    (target validation-error)
-	    (error-msg validation-error))))	    
+            (validation-error-target validation-error)
+            (validation-error-message validation-error))))
 
 (defun validation-error (target error-msg &rest args)
   (cerror "Skip validation"
