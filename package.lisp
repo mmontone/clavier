@@ -25,6 +25,7 @@
 	   #:integer-validator
 	   #:symbol-validator
 	   #:keyword-validator
+	   #:list-validator
 	   #:function-validator
 	   #:true-validator
 	   #:false-validator
@@ -61,6 +62,7 @@
 	   #:is-an-integer
 	   #:is-a-symbol
 	   #:is-a-keyword
+	   #:is-a-list
 	   #:valid-email
 	   #:matches-regex
 	   #:valid-url

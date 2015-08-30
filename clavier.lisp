@@ -7,6 +7,9 @@
     (funcall func)))
 
 (defmacro with-signal-validation-errors ((&optional (signal t)) &body body)
+  "Enables/disables validation errors in body
+
+   Args: - signal(boolean) : If **T**, errors are signaled. If **NIL**, they are not."
   `(call-with-signal-validation-errors (lambda () ,@body) ,signal))
 
 (defmacro collecting-validation-errors ((errors found-p) expr &body body)
@@ -166,6 +169,15 @@
    :message (lambda (validator object)
 	      (format nil "~A is not a keyword" object)))
   (:metaclass closer-mop:funcallable-standard-class))
+
+(defclass list-validator (type-validator)
+  ()
+  (:default-initargs
+   :type 'list
+   :message (lambda (validator object)
+	      (format nil "~A is not a list" object)))
+  (:metaclass closer-mop:funcallable-standard-class))
+
 
 (defclass function-validator (validator)
   ((function :initarg :function
@@ -515,6 +527,11 @@
 
 (defun is-a-keyword (&optional message &rest args)
   (apply #'make-instance 'keyword-validator
+	 (when message
+	   (list :message (apply #'format nil message args)))))
+
+(defun is-a-list (&optional message &rest args)
+  (apply #'make-instance 'list-validator
 	 (when message
 	   (list :message (apply #'format nil message args)))))
 
