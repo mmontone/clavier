@@ -488,7 +488,7 @@
 	      ,@(when message
 		      (list :message (apply #'format nil message args))))))
 
-(defun || (x y &optional message &rest args)
+#-ecl(defun || (x y &optional message &rest args)
   (apply #'make-instance 'or-validator
 	 `(:x ,x :y ,y
 	      ,@(when message
