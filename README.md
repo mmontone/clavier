@@ -1,6 +1,9 @@
 Clavier
 ----------
 
+[![Quicklisp](http://quickdocs.org/badge/clavier.svg)](http://quickdocs.org/clavier/)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 *Clavier* is a general purpose validation library for Common Lisp.
 
 Install
