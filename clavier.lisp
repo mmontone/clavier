@@ -335,7 +335,7 @@
 	(if error-p
 	    (validation-error object message)
 	    (values nil message)))
-      t))     
+      (values t nil)))
 
 (defgeneric %validate (validator object &rest args))
 (defmethod %validate (validator object &rest args))
