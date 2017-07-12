@@ -9,23 +9,11 @@ Clavier
 Install
 -------
 
-Download the source code from https://github.com/mmontone/clavier and point `.asd` system definition files from `./sbcl/system (ln -s <system definition file path>)` and then evaluate:
+Through Quicklisp:
 
 ```lisp
-(require :clavier)
+(ql:quickload :clavier)
 ```
-from your lisp listener. 
-
-You will also need to satisfy these system dependencies:
-
-- `alexandria`
-- `cl-ppcre`
-- `closer-mop`
-
-The easiest way of installing those packages is via [Quicklisp](http://www.quicklisp.org/).
-
-This library is under the MIT licence.
-
 Getting started
 ---------------
 
