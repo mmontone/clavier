@@ -488,7 +488,10 @@
 	      ,@(when message
 		      (list :message (apply #'format nil message args))))))
 
-#-ecl(defun || (x y &optional message &rest args)
+;; There's a problem when trying to compile || as function name on ECL
+;; So, we don't define it.
+#-ecl
+(defun || (x y &optional message &rest args)
   (apply #'make-instance 'or-validator
 	 `(:x ,x :y ,y
 	      ,@(when message

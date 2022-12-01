@@ -37,6 +37,7 @@
     (is (not (funcall validator 33)))
     (multiple-value-bind (result message)
 	(funcall validator 33)
+      (declare (ignore result))
       (is (equalp message (validator-message validator 33))))))
 
 ;; one-of-validator
@@ -123,6 +124,7 @@
 			:function (lambda (x)
 				    (equalp x 22))
 			:message (lambda (validator object)
+				   (declare (ignore validator))
 				   (format nil "~A is not 22" object)))))
     (is (funcall validator 22))
     (is (not (funcall validator 33)))))
@@ -189,7 +191,7 @@
     (is (not (funcall validator "@asdf.com")))))
 
 ;; regex validator
-(deftest regex-validator ()
+(deftest regex-validator-test ()
   (let ((validator (make-instance 'regex-validator :regex "^foo.*$")))
     (is (funcall validator "foo lala"))
     (is (not (funcall validator " foo lala")))))
@@ -217,6 +219,8 @@
     (is (not (funcall validator "foobarfoo")))))
 
 ;; builder tests
+;; || is not supported on ECL
+#-ecl
 (deftest builders-test ()
   (let ((validator (not-blank)))
     (is (not (funcall validator nil)))
@@ -262,6 +266,7 @@
 	(funcall (not-blank) (password person) :message "Password is required")
 	(funcall (~ (blank)) (email person) :message "Email is required")
 	(funcall (valid-email) (email person)))
+    (declare (ignore found-p))
     errors))
 
 (let ((person (make-instance 'person)))
