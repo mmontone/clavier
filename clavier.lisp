@@ -564,10 +564,11 @@
 		  ,@(when message
 			  (list :message (apply #'format nil message args))))))
 
-(defun len (&key min max min-message max-message)
+(defun len (&key min max message min-message max-message)
   (make-instance 'length-validator
 		 :min min
 		 :max max
+                 :message message
 		 :min-message min-message
 		 :max-message max-message))
 
