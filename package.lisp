@@ -9,6 +9,7 @@
            #:validation-error-message
 	   #:validator
 	   #:validate
+	   #:validate-all
 	   #:message
 	   #:validator-message
 

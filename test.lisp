@@ -282,10 +282,30 @@
     (let ((person (make-instance 'person)))
       (signals validation-error
 	(funcall validator (fullname person))))
-    
+
     (let ((person (make-instance 'person :fullname "M")))
       (signals validation-error
 	(funcall validator (fullname person))))
-    
+
     (let ((person (make-instance 'person :fullname "Mariano")))
       (finishes (funcall validator (fullname person))))))
+
+;; list of validators, :allow-blank
+(deftest validate-all-test ()
+  (let ((validators (list :allow-blank
+                          (clavier:len :min 3))))
+    (multiple-value-bind (status messages)
+        (validate-all validators "")
+      (LOG:INFO status messages)
+      (is status "status should be true")
+      (is (not messages)))
+
+    (multiple-value-bind (status messages)
+        (validate-all validators "abcde")
+      (is status)
+      (is (not messages)))
+
+    (multiple-value-bind (status messages)
+        (validate-all validators "ab")
+      (is (not status))
+      (is (equal 1 (length messages))))))

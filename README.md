@@ -42,18 +42,30 @@ Validators are implemented as funcallable classes. So, alternatively to using th
 ```lisp
 (let ((validator (make-instance 'equal-to-validator :object 22)))
     (funcall validator 22 :error-p t))
-    
+
 ;=> T
 ```
+
 
 ## Validation expressions
 
 It is possible to create validators with a more convenient syntax. Each validator provides a builder function. For instance, and equal-to-validator can be built like this:
 
 ```lisp
+;; use == instead of (make-instance 'equal-to-validator :object 100)
 (funcall (== 100) 100) ;=> T
 (funcall (== 100) 99) ;=> NIL
 ```
+
+The less-than-validator can be built with `(less-than <value>)`.
+
+See the list below.
+
+## Validate a list of validators
+
+Use `validate-all <list of validators> <object>`.
+
+It runs all the validators and returns two values: the status (boolean), a list of validation messages.
 
 ## Validators composition
 
@@ -97,6 +109,28 @@ NIL
 ;; =>
 NIL
 "2 is not a string"
+~~~
+
+For this matter, a common need in web development, we accept the special `:allow-blank` validator (as a keyword).
+
+### Allow blank
+
+`:allow-blank`, used with `validate-all`, accepts a blank input and, if it isn't blank, it validates the input with the rest of the validators.
+
+Example:
+
+~~~lisp
+(clavier::validate-all (list :allow-blank (clavier:len :min 3)) "")
+T
+NIL
+
+(clavier::validate-all (list :allow-blank (clavier:len :min 3)) "ab")
+NIL
+("Length of \"ab\" is less than 3")
+
+(clavier::validate-all (list  :ALLOW-BLANK (clavier:len :min 3)) "abc")
+T
+NIL
 ~~~
 
 
@@ -162,3 +196,4 @@ This is the list of available validator classes and their shortcut function:
 * less-than-validator `(less-than number)`
 * greater-than-validator `(greater-than number)`
 * length-validator `(len)`
+* `:allow-blank`

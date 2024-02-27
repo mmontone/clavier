@@ -2,6 +2,13 @@
 
 (defvar *signal-validation-errors* nil)
 
+(defvar *whitespaces* (list #\Backspace #\Tab #\Linefeed #\Newline #\Vt #\Page
+                            #\Return #\Space #\Rubout
+                            #+sbcl #\Next-Line #-sbcl (code-char 133)
+                            #+sbcl #\No-break_space)
+  ;; see updates on cl-str
+  "Characters representing a whitespace. On some implementations, linefeed and newline represent the same character (code).")
+
 (defun call-with-signal-validation-errors (func &optional (signal t))
   (let ((*signal-validation-errors* signal))
     (funcall func)))
@@ -356,6 +363,7 @@
            (format nil "Length of ~s is more than ~a" object (validator-max validator)))))))
 
 (defun validate (validator object &rest args &key (error-p *signal-validation-errors*) message &allow-other-keys)
+  "Validate OBJECT with VALIDATOR. Return two values: the status (boolean), an optional message."
   (if (not (apply #'%validate validator object args))
       (let ((message (or message (validator-message validator object))))
         (if error-p
@@ -364,6 +372,26 @@
       (values t nil)))
 
 (defgeneric %validate (validator object &rest args))
+
+(defun validate-all (validators object &rest args &key (error-p *signal-validation-errors*) message &allow-other-keys)
+  "Run all validators in turn. Return two values: the status (boolean), and a list of messages."
+  (declare (ignorable error-p message args))
+  (let ((messages nil)
+        (valid t))
+    (loop for vdtor in validators
+          if (and (eql :allow-blank vdtor)
+                  (equal "" (string-trim *whitespaces* object)))
+            return t
+          else
+            do (unless (symbolp vdtor)
+                 (multiple-value-bind (status message)
+                     (validate vdtor object :error-p error-p)
+                   (unless status
+                     (setf valid nil))
+                   (when message
+                     (push message messages)))))
+    (values valid
+            (reverse (uiop:ensure-list messages)))))
 
 (defmethod %validate ((validator validator-collection) object &rest args)
   (declare (ignorable args))
