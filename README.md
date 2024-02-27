@@ -74,7 +74,7 @@ Validators messages to be used when validation fails can be customized passing a
 
 ## Catching and collecting validation errors
 
-Validation errors can controlled globally by setting the dynamic variable `*signal-validation-errors*`, which is `NIL` by default (no validation errors are signaled by default).
+Validation errors can be controlled globally by setting the dynamic variable `*signal-validation-errors*`, which is `NIL` by default (no validation errors are signaled by default).
 
 There's also the `with-signal-validation-errors` macro to specify whether validation errors should be signaled or not in a dynamic extent. For instance, this code signals a validation error:
 
@@ -101,26 +101,32 @@ Use the `collecting-validation-errors` macro to collect validation errors happen
 ```
 
 ## Validators list:
-* equal-to-validator
-* not-equal-to-validator
-* blank-validator
-* not-blank-validator
-* true-validator
-* false-validator
-* type-validator
-* string-validator
-* boolean-validator
-* integer-validator
-* symbol-validator
-* keyword-validator
-* function-validator
-* email-validator
-* regex-validator
-* url-validator
-* not-validator
-* and-validator
-* or-validator
-* one-of-validator
-* less-than-validator
-* greater-than-validator
-* length-validator
+
+This is the list of available validator classes and their shortcut function:
+
+* equal-to-validator (==)
+* not-equal-to-validator (~=)
+* blank-validator (blank)
+* not-blank-validator (not-blank)
+* true-validator (is-true)
+* false-validator (is-false)
+* type-validator (is-a (type))
+* string-validator (is-a-string)
+* boolean-validator (is-a-boolean)
+* integer-validator (is-an-integer)
+* symbol-validator (is-a-string)
+* keyword-validator (is-a-keyword)
+* list-validator (is-a-list)
+* function-validator (fn (function, message))
+* email-validator (valid-email)
+* regex-validator (matches-regex)
+* url-validator (valid-url)
+* datetime-validator (valid-datetime)
+* pathname-validator (valid-pathname)
+* not-validator (~)
+* and-validator (&&)
+* or-validator (||)
+* one-of-validator (one-of)
+* less-than-validator (less-than)
+* greater-than-validator (greater-than)
+* length-validator (len)
