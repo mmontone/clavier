@@ -258,11 +258,9 @@
       :initform (error "Provide the second validator")))
   (:default-initargs
    :message (lambda (validator object)
-              (format nil "~A or ~A"
-                      (let ((x-validator (x validator)))
-                        (validator-message x-validator object))
-                      (let ((y-validator (y validator)))
-                        (validator-message y-validator object)))))
+              (if (not (validate (x validator) object :error-p nil))
+                  (validator-message (x validator) object)
+                  (validator-message (y validator) object))))
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defclass or-validator (validator)
@@ -274,11 +272,9 @@
       :initform (error "Provide the second validator")))
   (:default-initargs
    :message (lambda (validator object)
-              (format nil "~A and ~A"
-                      (let ((x-validator (x validator)))
-                        (validator-message x-validator object))
-                      (let ((y-validator (y validator)))
-                        (validator-message y-validator object)))))
+              (if (validate (x validator) object :error-p nil)
+                  (validator-message (x validator) object)
+                  (validator-message (y validator) object))))
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defclass one-of-validator (validator)
