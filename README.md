@@ -136,29 +136,29 @@ Use the `collecting-validation-errors` macro to collect validation errors happen
 
 This is the list of available validator classes and their shortcut function:
 
-* equal-to-validator (==)
-* not-equal-to-validator (~=)
-* blank-validator (blank)
-* not-blank-validator (not-blank)
-* true-validator (is-true)
-* false-validator (is-false)
-* type-validator (is-a (type))
-* string-validator (is-a-string)
-* boolean-validator (is-a-boolean)
-* integer-validator (is-an-integer)
-* symbol-validator (is-a-string)
-* keyword-validator (is-a-keyword)
-* list-validator (is-a-list)
-* function-validator (fn (function, message))
-* email-validator (valid-email)
-* regex-validator (matches-regex)
-* url-validator (valid-url)
-* datetime-validator (valid-datetime)
-* pathname-validator (valid-pathname)
-* not-validator (~)
-* and-validator (&&)
-* or-validator (||)
-* one-of-validator (one-of)
-* less-than-validator (less-than)
-* greater-than-validator (greater-than)
-* length-validator (len)
+* equal-to-validator `(==)`
+* not-equal-to-validator `(~=)`
+* blank-validator `(blank)`
+* not-blank-validator `(not-blank)`
+* true-validator `(is-true)`
+* false-validator `(is-false)`
+* type-validator `(is-a type)`
+* string-validator `(is-a-string)`
+* boolean-validator `(is-a-boolean)`
+* integer-validator `(is-an-integer)`
+* symbol-validator `(is-a-symbol)`
+* keyword-validator `(is-a-keyword)`
+* list-validator `(is-a-list)`
+* function-validator `(fn function message)`
+* email-validator `(valid-email)`
+* regex-validator `(matches-regex)`
+* url-validator `(valid-url)`
+* datetime-validator `(valid-datetime)`
+* pathname-validator `(valid-pathname)`
+* not-validator `(~ validator)`
+* and-validator `(&& validator1 validator2)`
+* or-validator `(|| validator1 validator2)`
+* one-of-validator `(one-of options)`
+* less-than-validator `(less-than number)`
+* greater-than-validator `(greater-than number)`
+* length-validator `(len)`
