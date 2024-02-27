@@ -58,6 +58,7 @@
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defmethod initialize-instance :after ((validator validator) &rest initargs)
+  (declare (ignorable initargs))
   (closer-mop:set-funcallable-instance-function
    validator
    (lambda (&rest args)
@@ -68,7 +69,9 @@
                :accessor validators
                :initform nil))
   (:metaclass closer-mop:funcallable-standard-class)
-  (:default-initargs :message (lambda (&rest args) "")))
+  (:default-initargs :message (lambda (&rest args)
+                                (declare (ignorable args))
+                                "")))
 
 (defclass equal-to-validator (validator)
   ((object :initarg :object
@@ -145,6 +148,7 @@
   (:default-initargs
    :type 'boolean
    :message (lambda (validator object)
+              (declare (ignorable validator))
               (format nil "~A is not a boolean" object)))
   (:metaclass closer-mop:funcallable-standard-class))
 
@@ -153,6 +157,7 @@
   (:default-initargs
    :type 'integer
    :message (lambda (validator object)
+              (declare (ignorable validator))
               (format nil "~A is not an integer" object)))
   (:metaclass closer-mop:funcallable-standard-class))
 
@@ -161,6 +166,7 @@
   (:default-initargs
    :type 'symbol
    :message (lambda (validator object)
+              (declare (ignorable validator))
               (format nil "~A is not a symbol" object)))
   (:metaclass closer-mop:funcallable-standard-class))
 
@@ -169,6 +175,7 @@
   (:default-initargs
    :type 'keyword
    :message (lambda (validator object)
+              (declare (ignorable validator))
               (format nil "~A is not a keyword" object)))
   (:metaclass closer-mop:funcallable-standard-class))
 
@@ -177,6 +184,7 @@
   (:default-initargs
    :type 'list
    :message (lambda (validator object)
+              (declare (ignorable validator))
               (format nil "~A is not a list" object)))
   (:metaclass closer-mop:funcallable-standard-class))
 
@@ -191,7 +199,7 @@
   ()
   (:default-initargs
    :message (lambda (validator object)
-              (declare (ignorable validator object))
+              (declare (ignorable validator))
               (format nil "The email is invalid: ~A" object)))
   (:metaclass closer-mop:funcallable-standard-class))
 
@@ -359,36 +367,46 @@
 (defmethod %validate (validator object &rest args))
 
 (defmethod %validate ((validator validator-collection) object &rest args)
+  (declare (ignorable args))
   (loop for validator in (validators validator)
         do (validate validator object :error-p t)))
 
 (defmethod %validate ((validator equal-to-validator) object &rest args)
+  (declare (ignorable args))
   (equalp object (object validator)))
 
 (defmethod %validate ((validator not-equal-to-validator) object &rest args)
+  (declare (ignorable args))
   (not (equalp object (object validator))))
 
 (defmethod %validate ((validator type-validator) object &rest args)
+  (declare (ignorable args))
   (typep object (validator-type validator)))
 
 (defmethod %validate ((validator function-validator) object &rest args)
+  (declare (ignorable args))
   (funcall (validator-function validator) object))
 
 (defmethod %validate ((validator blank-validator) object &rest args)
+  (declare (ignorable validator args))
   (or (null object)
       (equalp object "")))
 
 (defmethod %validate ((validator not-blank-validator) object &rest args)
+  (declare (ignorable validator args))
   (not (or (null object)
            (equalp object ""))))
 
 (defmethod %validate ((validator true-validator) object &rest args)
+  (declare (ignorable validator args))
   (eql t object))
 
 (defmethod %validate ((validator false-validator) object &rest args)
+  (declare (ignorable validator args))
   (null object))
 
 (defmethod %validate ((validator length-validator) object &rest args)
+  (declare (ignorable args))
   (and (or (null (validator-length validator))
            (= (length object) (validator-length validator)))
        (or (null (validator-min validator))
@@ -401,21 +419,26 @@
         (ppcre:scan "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$" string))))
 
 (defmethod %validate ((validator email-validator) object &rest args)
+  (declare (ignorable args))
   (valid-email-address-p object))
 
 (defun valid-url-p (string)
   (not (null (ppcre:scan "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\??(?:[\\-\\+=&;%@\\.\\w_]*)#?(?:[\\.\\!\\/\\\\\\w]*))?)" string))))
 
 (defmethod %validate ((validator url-validator) object &rest args)
+  (declare (ignorable args))
   (valid-url-p object))
 
 (defmethod %validate ((validator regex-validator) object &rest args)
+  (declare (ignorable args))
   (not (null (ppcre:scan (validator-regex validator) object))))
 
 (defmethod %validate ((validator datetime-validator) object &rest args)
+  (declare (ignorable args))
   (not (null (chronicity:parse object))))
 
 (defmethod %validate ((validator pathname-validator) object &rest args)
+  (declare (ignorable args))
   (and (pathname object)
        (or (not (absolute-p validator))
            (fad:pathname-absolute-p (pathname object)))
@@ -426,9 +449,11 @@
            (probe-file (pathname object)))))
 
 (defmethod %validate ((validator not-validator) object &rest args)
+  (declare (ignorable args))
   (not (%validate (validator validator) object)))
 
 (defmethod %validate ((validator and-validator) object &rest args)
+  (declare (ignorable args))
   (and (validate (x validator) object)
        (validate (y validator) object)))
 
@@ -442,16 +467,20 @@
           (validate (y validator) object))))
 
 (defmethod %validate ((validator one-of-validator) object &rest args)
+  (declare (ignorable args))
   (member object (options validator) :test #'equalp))
 
 (defmethod %validate ((validator less-than-validator) object &rest args)
+  (declare (ignorable args))
   (< object (validator-number validator)))
 
 (defmethod %validate ((validator greater-than-validator) object &rest args)
+  (declare (ignorable args))
   (> object (validator-number validator)))
 
 ;; Validator builder functions
 (defun == (object &optional message &rest args)
+  (declare (ignorable args))
   (apply #'make-instance 'equal-to-validator
          `(:object ,object
                    ,@(when message

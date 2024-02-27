@@ -68,6 +68,38 @@ This allows to compose validators, using `==`, `~=`, `&&`, `||` as the compositi
     (funcall validator 5))
 ```
 
+For example, this is how to accept a blank object, but validate it if it isn't blank:
+
+
+~~~lisp
+(defparameter *validator* (clavier:||
+                                   (clavier:blank)
+                                   (clavier:&& (clavier:is-a-string)
+                                               (clavier:len :min 10)))
+  "Allow a blank value. When non blank, validate.")
+
+(funcall *validator* "")
+;; =>
+T
+NIL
+
+(funcall *validator* "asdfasdfasdf")
+;; =>
+T
+NIL
+
+(funcall *validator* "asdf")
+;; =>
+NIL
+"Length of \"asdf\" is less than 10"
+
+(funcall *validator* 2)
+;; =>
+NIL
+"2 is not a string"
+~~~
+
+
 ## Validators messages
 
 Validators messages to be used when validation fails can be customized passing an `:message` argument when building the validator
