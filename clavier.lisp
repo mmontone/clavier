@@ -413,8 +413,13 @@
        (validate (y validator) object)))
 
 (defmethod %validate ((validator or-validator) object &rest args)
-  (or (validate (x validator) object)
-      (validate (y validator) object)))
+  (if (getf args :signal-validation-errors)
+      (handler-case
+          (validate (x validator) object)
+        (validation-error ()
+          (validate (y validator) object)))
+      (or (validate (x validator) object)
+          (validate (y validator) object))))
 
 (defmethod %validate ((validator one-of-validator) object &rest args)
   (member object (options validator) :test #'equalp))
