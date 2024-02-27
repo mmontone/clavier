@@ -18,16 +18,6 @@
         (lambda () ,expr))
      ,@body))
 
-(defun %collecting-validation-errors (func)
-  (let ((errors nil))
-    (handler-bind
-        ((validation-error
-           (lambda (c)
-             (push c errors)
-             (continue c))))
-      (funcall func))
-    (values errors (plusp (length errors)))))
-
 (define-condition validation-error (error)
   ((target :initarg :target
            :initform (error "Set up the target")
@@ -49,6 +39,16 @@
           'validation-error
           :target target
           :error-msg (apply #'format nil (cons error-msg args))))
+
+(defun %collecting-validation-errors (func)
+  (let ((errors nil))
+    (handler-bind
+        ((validation-error
+           (lambda (c)
+             (push c errors)
+             (continue c))))
+      (funcall func))
+    (values errors (plusp (length errors)))))
 
 (defclass validator (closer-mop:funcallable-standard-object)
   ((message :initarg :message
@@ -364,7 +364,6 @@
       (values t nil)))
 
 (defgeneric %validate (validator object &rest args))
-(defmethod %validate (validator object &rest args))
 
 (defmethod %validate ((validator validator-collection) object &rest args)
   (declare (ignorable args))
