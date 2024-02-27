@@ -53,13 +53,15 @@
 (defclass validator (closer-mop:funcallable-standard-object)
   ((message :initarg :message
             :accessor message
+            :type (or null string function)
             :initform (error "Provide the validation error message")))
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defmethod initialize-instance :after ((validator validator) &rest initargs)
-  (closer-mop:set-funcallable-instance-function validator
-                                                (lambda (&rest args)
-                                                  (apply #'validate validator args))))
+  (closer-mop:set-funcallable-instance-function
+   validator
+   (lambda (&rest args)
+     (apply #'validate validator args))))
 
 (defclass validator-collection (validator)
   ((validators :initarg :validators
@@ -318,6 +320,10 @@
         :accessor validator-max
         :initform nil
         :documentation "Maximum length")
+   (length :initarg :length
+           :accessor validator-length
+           :initform nil
+           :documentation "The expected length")
    (min-message :initarg :min-message
                 :accessor validator-min-message
                 :initform nil
@@ -326,8 +332,24 @@
                 :accessor validator-max-message
                 :initform nil
                 :documentation "Message for when length is above maximum"))
-  (:default-initargs :message "Size is not correct")
+  (:default-initargs :message nil)
   (:metaclass closer-mop:funcallable-standard-class))
+
+(defmethod message ((validator length-validator))
+  (lambda (validator object)
+    (cond
+      ((and (validator-length validator)
+            (not (= (validator-length validator) (length object))))
+       (or (slot-value validator 'message)
+           (format nil "~a has not length: ~a" object (validator-length validator))))
+      ((and (validator-min validator)
+            (< (length object) (validator-min validator)))
+       (or (validator-min-message validator)
+           (format nil "Length of ~a is less than ~a" object (validator-min validator))))
+      ((and (validator-max validator)
+            (> (length object) (validator-max validator)))
+       (or (validator-max-message validator)
+           (format nil "Length of ~a is more than ~a" object (validator-max validator)))))))
 
 (defun validate (validator object &rest args &key (error-p *signal-validation-errors*) message &allow-other-keys)
   (if (not (apply #'%validate validator object args))
@@ -371,7 +393,9 @@
   (null object))
 
 (defmethod %validate ((validator length-validator) object &rest args)
-  (and (or (null (validator-min validator))
+  (and (or (null (validator-length validator))
+           (= (length object) (validator-length validator)))
+       (or (null (validator-min validator))
            (>= (length object) (validator-min validator)))
        (or (null (validator-max validator))
            (<= (length object) (validator-max validator)))))
