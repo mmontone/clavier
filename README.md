@@ -151,7 +151,7 @@ This is the list of available validator classes and their shortcut function:
 * list-validator `(is-a-list)`
 * function-validator `(fn function message)`
 * email-validator `(valid-email)`
-* regex-validator `(matches-regex)`
+* regex-validator `(matches-regex regex-pattern)`
 * url-validator `(valid-url)`
 * datetime-validator `(valid-datetime)`
 * pathname-validator `(valid-pathname)`
