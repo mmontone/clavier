@@ -415,7 +415,7 @@
 
 (defun valid-email-address-p (string)
   (not (null
-        (ppcre:scan "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$" string))))
+        (ppcre:scan "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" string))))
 
 (defmethod %validate ((validator email-validator) object &rest args)
   (declare (ignorable args))
