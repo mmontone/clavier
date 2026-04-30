@@ -138,8 +138,8 @@ This is the list of available validator classes and their shortcut function:
 
 * equal-to-validator `(==)`
 * not-equal-to-validator `(~=)`
-* blank-validator `(blank)`
-* not-blank-validator `(not-blank)`
+* empty-validator `(empty)`
+* not-empty-validator `(not-empty)`
 * true-validator `(is-true)`
 * false-validator `(is-false)`
 * type-validator `(is-a type)`
