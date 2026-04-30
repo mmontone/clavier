@@ -13,12 +13,14 @@
 	   #:validator-message
 
 	   ;; Validators
-	   
+
 	   #:validator-collection
 	   #:equal-to-validator
 	   #:not-equal-to-validator
 	   #:blank-validator
 	   #:not-blank-validator
+	   #:empty-validator
+	   #:not-empty-validator
 	   #:type-validator
 	   #:string-validator
 	   #:boolean-validator
@@ -48,6 +50,8 @@
 	   #:one-of
 	   #:blank
 	   #:not-blank
+	   #:empty
+	   #:not-empty
 	   #:is-true
 	   #:is-false
 	   #:greater-than

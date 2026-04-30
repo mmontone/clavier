@@ -93,6 +93,22 @@
      (format nil "~A is equal to ~A" object (object validator))))
   (:metaclass closer-mop:funcallable-standard-class))
 
+(defclass empty-validator (validator)
+  ()
+  (:default-initargs
+   :message (lambda (validator object)
+              (declare (ignorable validator object))
+              (format nil "Should be an empty string")))
+  (:metaclass closer-mop:funcallable-standard-class))
+
+(defclass not-empty-validator (validator)
+  ()
+  (:default-initargs
+   :message (lambda (validator object)
+              (declare (ignorable validator object))
+              (format nil "Should not be an empty string")))
+  (:metaclass closer-mop:funcallable-standard-class))
+
 (defclass blank-validator (validator)
   ()
   (:default-initargs
@@ -386,15 +402,23 @@
   (declare (ignorable args))
   (funcall (validator-function validator) object))
 
-(defmethod %validate ((validator blank-validator) object &rest args)
+(defmethod %validate ((validator empty-validator) object &rest args)
   (declare (ignorable validator args))
   (or (null object)
       (equalp object "")))
 
-(defmethod %validate ((validator not-blank-validator) object &rest args)
+(defmethod %validate ((validator not-empty-validator) object &rest args)
   (declare (ignorable validator args))
   (not (or (null object)
            (equalp object ""))))
+
+(defmethod %validate ((validator blank-validator) object &rest args)
+  (declare (ignorable validator args))
+  (str:blankp object))
+
+(defmethod %validate ((validator not-blank-validator) object &rest args)
+  (declare (ignorable validator args))
+  (not (str:blankp object)))
 
 (defmethod %validate ((validator true-validator) object &rest args)
   (declare (ignorable validator args))
@@ -496,6 +520,16 @@
          `(:options ,options
                     ,@(when message
                         (list :message (apply #'format nil message args))))))
+
+(defun empty (&optional message &rest args)
+  (apply #'make-instance 'empty-validator
+         (when message
+           (list :message (apply #'format nil message args)))))
+
+(defun not-empty (&optional message &rest args)
+  (apply #'make-instance 'not-empty-validator
+         (when message
+           (list :message (apply #'format nil message args)))))
 
 (defun blank (&optional message &rest args)
   (apply #'make-instance 'blank-validator

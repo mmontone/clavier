@@ -138,8 +138,10 @@ This is the list of available validator classes and their shortcut function:
 
 * equal-to-validator `(==)`
 * not-equal-to-validator `(~=)`
-* blank-validator `(blank)`
-* not-blank-validator `(not-blank)`
+* empty-validator `(empty)`: input can be nil or the empty string: `""`.
+* not-empty-validator `(not-empty)`
+* blank-validator `(empty)`: input can be nil or a string with whitespaces, by `str:*whitespaces`: `"    "`.
+* not-blank-validator `(not-empty)`
 * true-validator `(is-true)`
 * false-validator `(is-false)`
 * type-validator `(is-a type)`
@@ -162,3 +164,11 @@ This is the list of available validator classes and their shortcut function:
 * less-than-validator `(less-than number)`
 * greater-than-validator `(greater-than number)`
 * length-validator `(len)`
+
+CHANGELOG
+---------
+
+- 2026-04-30: renamed the existing "blank" validator to "empty" and
+  added a new "blank" validator, to differentiate between the empty
+  string `""` and a string with whitespaces `"   "` (with any whitespace
+  character as listed in `str:*whitespace*`).

@@ -47,18 +47,32 @@
     (is (funcall validator "bar"))
     (is (not (funcall validator "bye")))))
 
+;; empty validator
+(deftest empty-validator-test ()
+  (let ((validator (make-instance 'empty-validator)))
+    (is (not (funcall validator "foo")))
+    (is (funcall validator ""))
+    (is (funcall validator nil))))
+
+;; not-empty validator
+(deftest not-empty-validator-test ()
+  (let ((validator (make-instance 'not-empty-validator)))
+    (is (funcall validator "foo"))
+    (is (not (funcall validator "")))
+    (is (not (funcall validator nil)))))
+
 ;; blank validator
 (deftest blank-validator-test ()
   (let ((validator (make-instance 'blank-validator)))
     (is (not (funcall validator "foo")))
-    (is (funcall validator ""))
+    (is (funcall validator "    "))
     (is (funcall validator nil))))
 
 ;; not-blank validator
 (deftest not-blank-validator-test ()
   (let ((validator (make-instance 'not-blank-validator)))
     (is (funcall validator "foo"))
-    (is (not (funcall validator "")))
+    (is (not (funcall validator "    ")))
     (is (not (funcall validator nil)))))
 
 ;; type validator
@@ -157,13 +171,21 @@
 
 ;; not validator
 (deftest not-validator-test ()
-  (let ((validator (make-instance 'not-validator :validator (make-instance 'not-blank-validator))))
+  (let ((validator (make-instance 'not-validator :validator (make-instance 'not-empty-validator))))
     (is (not (funcall validator "hello")))
     (is (funcall validator "")))
 
+  (let ((validator (make-instance 'not-validator :validator (make-instance 'not-blank-validator))))
+    (is (not (funcall validator "hello")))
+    (is (funcall validator "    ")))
+
+  (let ((validator (make-instance 'not-validator :validator (make-instance 'empty-validator))))
+    (is (funcall validator "hello"))
+    (is (not (funcall validator ""))))
+
   (let ((validator (make-instance 'not-validator :validator (make-instance 'blank-validator))))
     (is (funcall validator "hello"))
-    (is (not (funcall validator "")))))
+    (is (not (funcall validator "   ")))))
 
 ;; and validator
 (deftest and-validator-test ()
@@ -222,9 +244,14 @@
 ;; || is not supported on ECL
 #-ecl
 (deftest builders-test ()
-  (let ((validator (not-blank)))
+  (let ((validator (not-empty)))
     (is (not (funcall validator nil)))
     (is (not (funcall validator "")))
+    (is (funcall validator "hello")))
+
+  (let ((validator (not-blank)))
+    (is (not (funcall validator nil)))
+    (is (not (funcall validator "    ")))
     (is (funcall validator "hello")))
 
   (let ((validator (&& (greater-than 20)
