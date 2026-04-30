@@ -61,6 +61,20 @@
     (is (not (funcall validator "")))
     (is (not (funcall validator nil)))))
 
+;; blank validator
+(deftest blank-validator-test ()
+  (let ((validator (make-instance 'blank-validator)))
+    (is (not (funcall validator "foo")))
+    (is (funcall validator "    "))
+    (is (funcall validator nil))))
+
+;; not-blank validator
+(deftest not-blank-validator-test ()
+  (let ((validator (make-instance 'not-blank-validator)))
+    (is (funcall validator "foo"))
+    (is (not (funcall validator "    ")))
+    (is (not (funcall validator nil)))))
+
 ;; type validator
 
 (deftest type-validator-test ()
@@ -161,9 +175,17 @@
     (is (not (funcall validator "hello")))
     (is (funcall validator "")))
 
+  (let ((validator (make-instance 'not-validator :validator (make-instance 'not-blank-validator))))
+    (is (not (funcall validator "hello")))
+    (is (funcall validator "    ")))
+
   (let ((validator (make-instance 'not-validator :validator (make-instance 'empty-validator))))
     (is (funcall validator "hello"))
-    (is (not (funcall validator "")))))
+    (is (not (funcall validator ""))))
+
+  (let ((validator (make-instance 'not-validator :validator (make-instance 'blank-validator))))
+    (is (funcall validator "hello"))
+    (is (not (funcall validator "   ")))))
 
 ;; and validator
 (deftest and-validator-test ()
@@ -227,6 +249,11 @@
     (is (not (funcall validator "")))
     (is (funcall validator "hello")))
 
+  (let ((validator (not-blank)))
+    (is (not (funcall validator nil)))
+    (is (not (funcall validator "    ")))
+    (is (funcall validator "hello")))
+
   (let ((validator (&& (greater-than 20)
 		       (less-than 30))))
     (is (funcall validator 25))
@@ -262,9 +289,9 @@
 (defun validate-person (person)
   (collecting-validation-errors (errors found-p)
       (with-signal-validation-errors ()
-	(funcall (not-empty "Fullname is required") (fullname person))
-	(funcall (not-empty) (password person) :message "Password is required")
-	(funcall (~ (empty)) (email person) :message "Email is required")
+	(funcall (not-blank "Fullname is required") (fullname person))
+	(funcall (not-blank) (password person) :message "Password is required")
+	(funcall (~ (blank)) (email person) :message "Email is required")
 	(funcall (valid-email) (email person)))
     (declare (ignore found-p))
     errors))
@@ -275,7 +302,7 @@
 ;; validator collection
 (deftest validator-collection-test ()
   (let ((validator (make-instance 'validator-collection :validators
-				(list (not-empty "Fullname is required")
+				(list (not-blank "Fullname is required")
 				      (fn (lambda (x)
 					    (> (length x) 2))
 					  "Fullname is too short")))))

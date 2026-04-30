@@ -6,9 +6,10 @@
     :homepage "https://github.com/mmontone/clavier"
     :long-description
   #.(uiop:read-file-string
-     (uiop:subpathname *load-pathname* "README.md"))            
+     (uiop:subpathname *load-pathname* "README.md"))
     :depends-on (#:alexandria
                  #:cl-ppcre
+                 #:str
                  #:closer-mop
                  #:chronicity
                  #:cl-fad)
