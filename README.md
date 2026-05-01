@@ -140,8 +140,8 @@ This is the list of available validator classes and their shortcut function:
 * not-equal-to-validator `(~=)`
 * empty-validator `(empty)`: input can be nil or the empty string: `""`.
 * not-empty-validator `(not-empty)`
-* blank-validator `(empty)`: input can be nil or a string with whitespaces, by `str:*whitespaces`: `"    "`.
-* not-blank-validator `(not-empty)`
+* blank-validator `(blank)`: input can be nil or a string with whitespaces, by `str:*whitespaces`: `"    "`.
+* not-blank-validator `(not-blank)`
 * true-validator `(is-true)`
 * false-validator `(is-false)`
 * type-validator `(is-a type)`
