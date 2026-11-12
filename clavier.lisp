@@ -498,11 +498,11 @@ If ERROR-P is NIL, then two values are returned, a boolean indicating if validat
 
 (defmethod %validate ((validator less-than-validator) object &rest args)
   (declare (ignorable args))
-  (< object (validator-number validator)))
+  (and (numberp object) (< object (validator-number validator))))
 
 (defmethod %validate ((validator greater-than-validator) object &rest args)
   (declare (ignorable args))
-  (> object (validator-number validator)))
+  (and (numberp object) (> object (validator-number validator))))
 
 ;; Validator builder functions
 (defun == (object &optional message &rest args)
