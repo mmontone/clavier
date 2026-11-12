@@ -372,6 +372,9 @@
            (format nil "Length of ~s is more than ~a" object (validator-max validator)))))))
 
 (defun validate (validator object &rest args &key (error-p *signal-validation-errors*) message &allow-other-keys)
+  "Validate OBJECT using VALIDATOR.
+If ERROR-P is T, then a validation error condition is signaled if OBJECT does not validate.
+If ERROR-P is NIL, then two values are returned, a boolean indicating if validation passes, and message as second value."
   (if (not (apply #'%validate validator object args))
       (let ((message (or message (validator-message validator object))))
         (if error-p
